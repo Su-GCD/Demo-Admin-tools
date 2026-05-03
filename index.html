@@ -856,7 +856,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
   <div class="modal modal-lg">
     <div class="modal-h"><div class="modal-t">Contract &amp; Pay · <span id="ct-adopter">S. Williams</span></div><button class="modal-x" onclick="closeModal('modal-contract')">×</button></div>
     <div class="modal-body">
-      <div class="info"><strong>Sequence:</strong> Trigger → system returns PID + contract PDFs + waivers per AID → adopter ticks consent → marketing consents → ePOS payment.</div>
+      <div class="info"><strong>Sequence:</strong> Trigger → system creates PID + person record → adoption agreement populated with animal &amp; adopter details → adopter reads &amp; types signature → marketing consents → ePOS payment.</div>
 
       <div class="panel" style="margin-bottom:10px">
         <div class="panel-h"><span class="panel-t">Shopping basket</span><button class="btn btn-sm" style="margin-left:auto" onclick="openSBSearch('basket')">+ Add AID</button></div>
@@ -875,28 +875,102 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
       </div>
 
       <div class="panel" style="margin-bottom:10px">
-        <div class="panel-h"><span class="panel-t">Contract &amp; waivers</span></div>
-        <div style="padding:12px 14px">
-          <div style="background:var(--c50);border:1px solid var(--c200);border-radius:4px;padding:10px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-            <div style="width:28px;height:36px;background:var(--c0);border:1px solid var(--c300);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--c500)">PDF</div>
-            <div><div style="font-size:12px;font-weight:600">Adoption_Contract_AID-00847.pdf</div><div style="font-size:10px;color:var(--c500)">From back-end system</div></div>
-            <button class="btn btn-sm" style="margin-left:auto">Preview</button>
+        <div class="panel-h"><span class="panel-t">Adoption agreement</span><span class="panel-s">Adopter view · this is what they see &amp; sign</span></div>
+        <div style="padding:0">
+
+          <!-- The agreement preview — what the adopter sees on screen -->
+          <div class="contract-preview" style="background:var(--c0);padding:18px 22px;border-bottom:1px solid var(--c200);max-height:420px;overflow-y:auto">
+
+            <div style="display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--c200);padding-bottom:10px;margin-bottom:14px">
+              <div style="flex:1">
+                <div style="font-size:9px;font-weight:700;letter-spacing:0.08em;color:var(--c500);text-transform:uppercase">SPCA New Zealand</div>
+                <div style="font-size:16px;font-weight:700;letter-spacing:-0.01em;margin-top:2px">Animal Adoption Agreement</div>
+              </div>
+              <div style="text-align:right;font-size:10px;color:var(--c500)">
+                <div>Date</div>
+                <div style="font-weight:600;color:var(--c800);font-size:12px;margin-top:1px" id="ct-date">22 / 04 / 2026</div>
+              </div>
+            </div>
+
+            <!-- Animal details (pre-filled from system) -->
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--c500);margin-bottom:8px">Animal details</div>
+            <div id="ct-animals">
+              <div style="background:var(--c50);border:1px solid var(--c200);border-radius:5px;padding:12px;margin-bottom:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <div style="font-weight:600;font-size:13px">Animal #1</div>
+                  <div style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:11px">
+                  <div><span style="color:var(--c500)">Name</span> <strong>Biscuit</strong></div>
+                  <div><span style="color:var(--c500)">Sex</span> <strong>Male</strong></div>
+                  <div><span style="color:var(--c500)">Microchip</span> <strong>982 000 412 567 891</strong></div>
+                  <div><span style="color:var(--c500)">Breed</span> <strong>Labrador</strong></div>
+                  <div><span style="color:var(--c500)">Colour</span> <strong>Yellow</strong></div>
+                  <div><span style="color:var(--c500)">Estimated age</span> <strong>3 years</strong></div>
+                  <div><span style="color:var(--c500)">Room no.</span> <strong>D-12</strong></div>
+                  <div><span style="color:var(--c500)">Adoption fee</span> <strong>$250.00</strong></div>
+                </div>
+                <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--c300);font-size:11px"><span style="color:var(--c500)">Comments</span><div style="margin-top:2px">Friendly with children, good with other dogs. House-trained. Up to date with vaccinations.</div></div>
+              </div>
+            </div>
+
+            <!-- Adopter details -->
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--c500);margin:14px 0 8px">Adopter details</div>
+            <div style="background:var(--c50);border:1px solid var(--c200);border-radius:5px;padding:12px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:11px">
+                <div><span style="color:var(--c500)">Name</span> <strong id="ct-adopter-name">S. Williams</strong></div>
+                <div><span style="color:var(--c500)">Phone</span> <strong>021 555 1234</strong></div>
+                <div><span style="color:var(--c500)">Email</span> <strong>swilliams@email.com</strong></div>
+                <div><span style="color:var(--c500)">Address</span> <strong>14 Queen St, Auckland</strong></div>
+              </div>
+            </div>
+
+            <!-- Conditions -->
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--c500);margin:14px 0 8px">Conditions of animal adoption</div>
+            <div style="font-size:11px;line-height:1.6;color:var(--c700)">
+              <p style="margin-bottom:8px"><em>I understand and agree to the following terms and conditions:</em></p>
+              <ol style="padding-left:18px;display:flex;flex-direction:column;gap:7px;list-style:decimal">
+                <li>I accept full responsibility for the animal I have chosen to adopt and for its welfare.</li>
+                <li>I understand that at the time of the adoption SPCA is acting in good faith and is not aware of any health concerns affecting the animal. However, if SPCA is aware of any existing health issues, these will be clearly disclosed and explained to me, and I choose to adopt the animal with knowledge of these health issues.</li>
+                <li>I understand that I may have rights and remedies available to me under the Consumer Guarantees Act 1993. Subject to that Act, if the adopted animal shows signs of ill health within 14 days of the date of this agreement, SPCA may, in its sole discretion, refund part of the veterinary costs incurred, provided: <em>(a)</em> SPCA is given immediate notice of the illness; <em>(b)</em> the animal is taken to a veterinary facility of SPCA's choice; and <em>(c)</em> SPCA agrees in writing to provide the refund prior to the commencement of any treatment.</li>
+                <li>I will abide by all relevant laws of New Zealand, including the Dog Control Act 1996 (where applicable) and the Animal Welfare Act 1999. I understand that I must provide the animal with suitable and sufficient food, water, shelter and veterinary treatment and that I commit an offence if I do not do so.</li>
+                <li>I will ensure all details for the animal on the microchip database remain current.</li>
+                <li>If I need to rehome the animal, I shall ensure this is done with due diligence, care and skill to ensure the best outcome for the animal.</li>
+                <li>I have read, understand, and agree to <a href="https://www.spca.nz/privacy" target="_blank" style="color:var(--c800);text-decoration:underline">SPCA's Privacy Policy</a>. I authorise SPCA to collect and retain my contact details, and to disclose those details to certain related entities, contractors, personnel, agents and other third parties, for the purpose of adopting the animal, and for other purposes described in the Privacy Policy. I authorise SPCA to disclose those details, and details of my adopted animal, to any Council and its Animal Management Contractors, for the purpose of registering my adopted animal.</li>
+              </ol>
+              <p style="margin-top:10px;font-size:10px;color:var(--c500);font-style:italic">Form updated: Oct 2021</p>
+            </div>
           </div>
-          <div style="background:var(--c50);border:1px solid var(--c200);border-radius:4px;padding:10px;display:flex;align-items:center;gap:10px">
-            <div style="width:28px;height:36px;background:var(--c0);border:1px solid var(--c300);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--c500)">PDF</div>
-            <div><div style="font-size:12px;font-weight:600">Medical_Waiver.pdf</div><div style="font-size:10px;color:var(--c500)">Auto-attached</div></div>
-            <button class="btn btn-sm" style="margin-left:auto">Preview</button>
+
+          <!-- Acceptance + signature -->
+          <div style="padding:14px 18px;background:var(--c50);border-bottom:1px solid var(--c200)">
+            <label class="checkbox" style="font-weight:600;font-size:12px;align-items:flex-start;color:var(--c900)">
+              <input type="checkbox" id="chk-contract" onchange="updateAcceptState()">
+              <span>I have read, understand and accept the conditions of animal adoption set out above.</span>
+            </label>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:14px;margin-top:12px;padding-top:12px;border-top:1px solid var(--c200);align-items:end">
+              <div>
+                <label class="f-label">Signed (type your full name)</label>
+                <input type="text" id="ct-signature" placeholder="Type your full name as a digital signature" oninput="updateAcceptState()" style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:18px;color:var(--c900);font-style:italic;background:var(--c0)">
+              </div>
+              <div>
+                <div class="f-label">Witness · placement officer</div>
+                <div style="font-size:13px;font-weight:600;padding:7px 10px;background:var(--c0);border:1px solid var(--c300);border-radius:4px;min-width:160px" id="ct-witness">J. Smith</div>
+              </div>
+            </div>
           </div>
-          <label class="checkbox" style="margin-top:10px;border-top:1px solid var(--c200);padding-top:10px"><input type="checkbox" id="chk-contract" onchange="updateAcceptState()"><span><strong>I have read and accept the contract and waivers.</strong></span></label>
+
         </div>
       </div>
 
+      <!-- Marketing consents — kept separate from the agreement per clause 8 (genuinely opt-in) -->
       <div class="panel" style="margin-bottom:10px">
-        <div class="panel-h"><span class="panel-t">Marketing consents</span></div>
-        <div style="padding:8px 14px">
-          <label class="checkbox"><input type="checkbox"> SPCA Pet Insurance</label>
-          <label class="checkbox"><input type="checkbox"> Purina</label>
-          <label class="checkbox"><input type="checkbox"> SPCA newsletters</label>
+        <div class="panel-h"><span class="panel-t">Marketing consents · optional</span><span class="panel-s">Tick only what the adopter agrees to</span></div>
+        <div style="padding:10px 14px">
+          <div style="font-size:11px;color:var(--c500);margin-bottom:8px">SPCA may share contact information with these third parties for promotional purposes. The adopter can decline any or all of these without affecting the adoption.</div>
+          <label class="checkbox"><input type="checkbox"> <span><strong>SPCA Pet Insurance</strong> — pet insurance offers and renewals</span></label>
+          <label class="checkbox"><input type="checkbox"> <span><strong>Nestlé Purina PetCare</strong> — pet food offers and product information</span></label>
+          <label class="checkbox"><input type="checkbox"> <span><strong>SPCA newsletters</strong> — campaigns, events, fundraising</span></label>
         </div>
       </div>
 
@@ -1208,10 +1282,41 @@ function openBonded(){openModal('modal-bonded')}
 /* ─── Contract & Pay (modal) ─── */
 function openContract(name,animal,aid){
   document.getElementById('ct-adopter').textContent=name;
-  if(animal&&aid)setBasketSingle(animal,aid);
+  document.getElementById('ct-adopter-name').textContent=name;
+  if(animal&&aid){
+    setBasketSingle(animal,aid);
+    updateAgreementAnimals();
+  }
   document.getElementById('chk-contract').checked=false;
+  document.getElementById('ct-signature').value='';
   updateAcceptState();
   openModal('modal-contract');
+}
+function updateAgreementAnimals(){
+  var rows=document.querySelectorAll('#basket .basket-row');
+  var html='';
+  rows.forEach(function(r,i){
+    var name=r.querySelector('.basket-name').textContent;
+    var aidLine=r.querySelector('.basket-aid').textContent;
+    var aid=aidLine.split(' · ')[0];
+    var img=r.querySelector('.basket-img').textContent;
+    var fee=r.getAttribute('data-fee');
+    var lookup=sbAnimals.find(function(a){return a.aid===aid})||{};
+    html+='<div style="background:var(--c50);border:1px solid var(--c200);border-radius:5px;padding:12px;margin-bottom:8px">'
+       +  '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+       +    '<div style="font-weight:600;font-size:13px">Animal #'+(i+1)+'</div>'
+       +    '<div style="font-family:monospace;font-size:10px;color:var(--c500)">'+aid+'</div>'
+       +  '</div>'
+       +  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:11px">'
+       +    '<div><span style="color:var(--c500)">Name</span> <strong>'+name+'</strong></div>'
+       +    '<div><span style="color:var(--c500)">Species</span> <strong>'+(lookup.species||'—')+'</strong></div>'
+       +    '<div><span style="color:var(--c500)">Microchip</span> <strong>982 000 ··· auto-fill</strong></div>'
+       +    '<div><span style="color:var(--c500)">Breed</span> <strong>'+(lookup.breed||'—')+'</strong></div>'
+       +    '<div><span style="color:var(--c500)">Tier</span> <strong>'+(lookup.tier||'—')+'</strong></div>'
+       +    '<div><span style="color:var(--c500)">Adoption fee</span> <strong>$'+fee+'.00</strong></div>'
+       +  '</div></div>';
+  });
+  if(html)document.getElementById('ct-animals').innerHTML=html;
 }
 function setBasketSingle(name,aid,fee,img){
   fee=fee||(sbAnimals.find(a=>a.aid===aid)||{}).fee||250;
@@ -1219,20 +1324,27 @@ function setBasketSingle(name,aid,fee,img){
   var tier=(sbAnimals.find(a=>a.aid===aid)||{}).tier||'Medium';
   document.getElementById('basket').innerHTML='<div class="basket-row" data-fee="'+fee+'"><div class="basket-img">'+img+'</div><div><div class="basket-name">'+name+'</div><div class="basket-aid">'+aid+' · '+tier+'</div></div><div class="basket-fee">$'+fee+'.00</div><button class="basket-rm" onclick="removeBasket(this)">×</button></div>';
   recalcBasket();
+  updateAgreementAnimals();
 }
 function addToBasketByAID(name,aid,fee,img){
   document.getElementById('basket').insertAdjacentHTML('beforeend','<div class="basket-row" data-fee="'+fee+'"><div class="basket-img">'+img+'</div><div><div class="basket-name">'+name+'</div><div class="basket-aid">'+aid+'</div></div><div class="basket-fee">$'+fee+'.00</div><button class="basket-rm" onclick="removeBasket(this)">×</button></div>');
   recalcBasket();
-  showToast(name+' ('+aid+') added to basket. Will return its own contract.');
+  updateAgreementAnimals();
+  showToast(name+' ('+aid+') added to basket. Agreement updated with new animal details.');
 }
-function removeBasket(btn){btn.parentNode.remove();recalcBasket()}
+function removeBasket(btn){btn.parentNode.remove();recalcBasket();updateAgreementAnimals();}
 function recalcBasket(){
   var rows=document.querySelectorAll('#basket .basket-row');var total=0;rows.forEach(r=>total+=parseFloat(r.getAttribute('data-fee'))||0);
   document.getElementById('basket-total').textContent='$'+total.toFixed(2);
   document.getElementById('pay-total').textContent='$'+total.toFixed(2);
 }
 function triggerContract(){showToast('Triggered: PID retrieved · person record created · contracts &amp; waivers pulled per AID · ePOS held transaction initiated.')}
-function updateAcceptState(){var btn=document.getElementById('pay-btn');btn.disabled=!document.getElementById('chk-contract').checked}
+function updateAcceptState(){
+  var btn=document.getElementById('pay-btn');
+  var checked=document.getElementById('chk-contract').checked;
+  var sig=document.getElementById('ct-signature').value.trim();
+  btn.disabled=!(checked && sig.length>=2);
+}
 function confirmPay(){showToast('Payment processed via ePOS · Animals → Adopted · Day 1 email triggered.');closeModal('modal-contract')}
 
 /* ─── Inline status change (Applications screen) ─── */
