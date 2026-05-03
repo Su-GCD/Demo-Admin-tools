@@ -115,6 +115,13 @@ input[type=text],input[type=password],input[type=number],input[type=email],input
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--c900);box-shadow:0 0 0 1px var(--c900)}
 textarea{width:100%;padding:7px 10px;border:1px solid var(--c300);border-radius:4px;font-size:12px;color:var(--c900);background:var(--c0);font-family:inherit;resize:vertical}
 select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:11px;background:var(--c0);color:var(--c700);cursor:pointer;font-family:inherit}
+.status-sel{padding:4px 22px 4px 8px;border:1px solid var(--c300);border-radius:10px;font-size:10px;font-weight:600;background:var(--c100);color:var(--c800);cursor:pointer;font-family:inherit;text-transform:uppercase;letter-spacing:0.04em;-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3e%3cpath d='M3 5l3 3 3-3' stroke='%23737373' stroke-width='1.4' fill='none' stroke-linecap='round'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 6px center;background-size:10px}
+.status-sel:hover{border-color:var(--c500);background-color:var(--c200)}
+.status-sel:focus{outline:none;border-color:var(--c900);box-shadow:0 0 0 1px var(--c900)}
+.status-sel.s-warn{background-color:#fef3c7;color:#92400e;border-color:#fde68a}
+.status-sel.s-dark{background-color:var(--c800);color:var(--c0);border-color:var(--c800)}
+.status-sel.s-mid{background-color:var(--c200);color:var(--c800)}
+.status-sel.s-out{background-color:var(--c100);color:var(--c500);text-decoration:line-through}
 .checkbox{display:flex;align-items:flex-start;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;color:var(--c800);line-height:1.5}
 .checkbox input{margin-top:2px}
 
@@ -260,8 +267,8 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
     <div class="sb-nav">
       <div class="nav-section">Operations</div>
       <div class="nav-item active" onclick="goScreen('dashboard',this)"><span class="nav-icon">▤</span>Dashboard</div>
-      <div class="nav-item" onclick="goScreen('queue',this)"><span class="nav-icon">≡</span>Application Queue<span class="nav-badge">7</span></div>
-      <div class="nav-item" onclick="goScreen('review',this)"><span class="nav-icon">⌕</span>In Review<span class="nav-badge">2</span></div>
+      <div class="nav-item" onclick="goScreen('applications',this)"><span class="nav-icon">≡</span>Applications<span class="nav-badge">9</span></div>
+      <div class="nav-item" onclick="goScreen('animals',this)"><span class="nav-icon">◈</span>Animals<span class="nav-badge">7</span></div>
       <div class="nav-item" onclick="goScreen('bookings',this)"><span class="nav-icon">◷</span>Bookings</div>
 
 
@@ -292,7 +299,9 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
         <div class="metrics">
           <div class="metric"><div class="metric-l">Active applications</div><div class="metric-v">7</div><div class="metric-s">3 need action today</div></div>
           <div class="metric"><div class="metric-l">In Review</div><div class="metric-v">2</div><div class="metric-s">Phone or email</div></div>
-          <div class="metric metric-alert"><div class="metric-l">No-show watch</div><div class="metric-v">3</div><div class="metric-s">1 closing soon</div></div>
+          <!-- DNA metric · role-aware -->
+          <div class="metric metric-alert role-cm role-admin" style="display:none"><div class="metric-l">DNA Reviews</div><div class="metric-v">2</div><div class="metric-s">Pending action</div></div>
+          <div class="metric role-staff-only"><div class="metric-l">DNA Holds</div><div class="metric-v">2</div><div class="metric-s">Awaiting manager</div></div>
           <div class="metric"><div class="metric-l">M&amp;G today</div><div class="metric-v">5</div><div class="metric-s">2 done · 1 no-show</div></div>
         </div>
 
@@ -304,11 +313,12 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
               <thead><tr><th>Priority</th><th>Item</th><th>Adopter / animal</th><th>Action</th></tr></thead>
               <tbody>
                 <tr><td><span class="pill p-warn">No Show</span></td><td>Follow up required</td><td>L. Marsh · Apollo</td><td><button class="btn btn-sm btn-primary" onclick="goScreen('bookings',document.querySelector('[onclick*=bookings]'))">Go to Bookings →</button></td></tr>
-                <tr><td><span class="pill p-mid">In Review</span></td><td>Complex application</td><td>K. Peters · Duke (47hrs)</td><td><button class="btn btn-sm btn-primary" onclick="openReview('K. Peters')">Review →</button></td></tr>
-                <tr><td><span class="pill p-mid">M&amp;G in 30min</span></td><td>10:30am appointment</td><td>S. Williams · Biscuit</td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">Open M&amp;G</button></td></tr>
-                <tr class="role-cm role-admin" style="display:none"><td><span class="pill p-light">DNA flag</span></td><td>Pending review</td><td>A. Johnson</td><td><button class="btn btn-sm" onclick="goScreen('dna',document.querySelector('[onclick*=dna]'))">Review →</button></td></tr>
+                <tr class="role-cm role-admin" style="display:none"><td><span class="pill p-warn">DNA Review</span></td><td>Pending action</td><td>A. Johnson · "Anderson, A"</td><td><button class="btn btn-sm btn-primary" onclick="goScreen('dna',document.querySelector('[onclick*=dna]'))">Review →</button></td></tr>
+                <tr class="role-cm role-admin" style="display:none"><td><span class="pill p-light">DNA Review</span></td><td>Pending action</td><td>B. Clarke · "Clarke, B" returned</td><td><button class="btn btn-sm" onclick="goScreen('dna',document.querySelector('[onclick*=dna]'))">Review →</button></td></tr>
                 <tr class="role-staff-only"><td><span class="pill p-light">DNA Hold</span></td><td>Application paused</td><td>A. Johnson</td><td><span style="font-size:11px;color:var(--c500)">Awaiting manager review</span></td></tr>
-                <tr><td><span class="pill p-light">In Review</span></td><td>Complex application</td><td>J. Lee · Apollo (22hrs)</td><td><button class="btn btn-sm" onclick="openReview('J. Lee')">Review →</button></td></tr>
+                <tr><td><span class="pill p-mid">In Review</span></td><td>Complex application</td><td>K. Peters · Duke (47hrs)</td><td><button class="btn btn-sm btn-primary" onclick="openReview('K. Peters')">Open →</button></td></tr>
+                <tr><td><span class="pill p-mid">M&amp;G in 30min</span></td><td>10:30am appointment</td><td>S. Williams · Biscuit</td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">Open M&amp;G</button></td></tr>
+                <tr><td><span class="pill p-light">In Review</span></td><td>Complex application</td><td>J. Lee · Apollo (22hrs)</td><td><button class="btn btn-sm" onclick="openReview('J. Lee')">Open →</button></td></tr>
               </tbody>
             </table>
           </div>
@@ -323,7 +333,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
               <tbody>
                 <tr><td>9:00am</td><td>M. Patel</td><td>Kitten litter</td><td><span class="pill p-dark">Done</span></td><td><button class="btn btn-sm" onclick="openContract('M. Patel','Kitten litter','AID-00904')">→ Contract</button></td></tr>
                 <tr><td>10:30am</td><td>S. Williams</td><td>Biscuit</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">Open M&amp;G</button></td></tr>
-                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm btn-primary" onclick="openNoShowModal('R. Chen','Apollo','AID-00712')">Resolve &rarr;</button></td></tr>
+                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm" onclick="goScreen('applications',document.querySelector('[onclick*=applications]'))">→ Applications</button></td></tr>
                 <tr><td>2:00pm</td><td>T. Nguyen</td><td>Puppy litter</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('T. Nguyen','Puppy litter','AID-00911')">Open M&amp;G</button></td></tr>
                 <tr><td>3:30pm</td><td>L. Park</td><td>Luna</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('L. Park','Luna','AID-00821')">Open M&amp;G</button></td></tr>
               </tbody>
@@ -333,44 +343,148 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
       </div>
 
       <!-- ─────── APPLICATION QUEUE ─────── -->
-      <div id="screen-queue" class="screen">
-        <div class="section-title">Application queue</div>
-        <div class="info">Simple/Medium auto-approve to "Book M&amp;G". Complex routes to <strong>In Review</strong>. <strong>Slot fills only when M&amp;G is booked.</strong> Contract &amp; Pay opens from row when M&amp;G is complete.</div>
+      <div id="screen-applications" class="screen">
+        <div class="section-title">Applications · adopter view</div>
+        <div class="info">One row per application. <strong>Status dropdown drives the workflow</strong> — change status to update the slot and trigger next actions. No Show is just a status; flip it back to Booked (rebook) or to Unsuccessful as needed. Switch to the <strong>Animals</strong> view to see applications grouped by animal.</div>
         <div class="panel">
           <div class="panel-h">
-            <span class="panel-t">All applications</span><span class="panel-s">7 active</span>
+            <span class="panel-t">All applications</span><span class="panel-s">9 active</span>
             <select style="margin-left:auto"><option>All tiers</option><option>Simple</option><option>Medium</option><option>Complex</option></select>
-            <select><option>All statuses</option><option>Applied</option><option>In Review</option><option>Booked</option><option>No Show</option></select>
+            <select><option>All statuses</option><option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option></select>
           </div>
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>Adopter</th><th>Animal · AID</th><th>Tier</th><th>Stage</th><th>Slot</th><th>Actions</th></tr></thead>
+              <thead><tr><th>Adopter</th><th>Animal · AID</th><th>Tier</th><th>Status</th><th>Slot</th><th>Action</th></tr></thead>
               <tbody>
-                <tr><td><strong>A. Mitchell</strong><div style="font-size:10px;color:var(--c500)">Applied 2hrs</div></td><td>Kitten litter #4 · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00904</span></td><td><span class="tier-s">Simple</span></td><td><span class="pill p-light">Applied</span></td><td><span class="pill p-out">on book</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openApp('A. Mitchell')">Open</button></div></td></tr>
-                <tr><td><strong>P. Davis</strong><div style="font-size:10px;color:var(--c500)">M&amp;G tomorrow</div></td><td>Biscuit · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td><span class="pill p-mid">M&amp;G booked</span></td><td><span class="pill p-dark">filled ✓</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openApp('P. Davis')">Open</button></div></td></tr>
-                <tr><td><strong>J. Lee</strong><div style="font-size:10px;color:var(--c500)">Applied 22hrs</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td><span class="pill p-mid">In Review</span></td><td><span class="pill p-out">on book</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openReview('J. Lee')">Review →</button></div></td></tr>
-                <tr><td><strong>K. Peters</strong><div style="font-size:10px;color:var(--c500)">Applied 47hrs</div></td><td>Duke · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00688</span></td><td><span class="tier-c">Complex</span></td><td><span class="pill p-mid">In Review</span></td><td><span class="pill p-out">on book</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openReview('K. Peters')">Review →</button></div></td></tr>
-                <tr><td><strong>S. Williams</strong><div style="font-size:10px;color:var(--c500)">M&amp;G today 10:30</div></td><td>Biscuit · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td><span class="pill p-dark">M&amp;G today</span></td><td><span class="pill p-dark">filled ✓</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">Open M&amp;G</button></div></td></tr>
-                <tr><td><strong>L. Park</strong><div style="font-size:10px;color:var(--c500)">M&amp;G today 3:30</div></td><td>Luna · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00821</span></td><td><span class="tier-m">Medium</span></td><td><span class="pill p-dark">M&amp;G today</span></td><td><span class="pill p-dark">filled ✓</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openMGAction('L. Park','Luna','AID-00821')">Open M&amp;G</button></div></td></tr>
-                <tr style="background:var(--c50)"><td><strong>L. Marsh</strong><div style="font-size:10px;color:var(--c500)">No show · needs follow-up</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td><span class="pill p-warn">No Show</span></td><td><span class="pill p-out">released</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openNoShowModal('L. Marsh','Apollo','AID-00712')">Resolve →</button></div></td></tr>
+                <tr><td><strong>A. Mitchell</strong><div style="font-size:10px;color:var(--c500)">Applied 2hrs</div></td><td>Kitten litter #4 · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00904</span></td><td><span class="tier-s">Simple</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'A. Mitchell','Kitten litter #4')">
+                    <option selected>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-out">on book</span></td><td><button class="btn btn-sm" onclick="openApp('A. Mitchell')">Open</button></td></tr>
+
+                <tr><td><strong>J. Lee</strong><div style="font-size:10px;color:var(--c500)">Applied 22hrs · email preferred</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'J. Lee','Apollo')">
+                    <option>Applied</option><option selected>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-out">on book</span></td><td><button class="btn btn-sm" onclick="openApp('J. Lee')">Open</button></td></tr>
+
+                <tr><td><strong>K. Peters</strong><div style="font-size:10px;color:var(--c500)">Applied 47hrs · phone preferred</div></td><td>Duke · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00688</span></td><td><span class="tier-c">Complex</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'K. Peters','Duke')">
+                    <option>Applied</option><option selected>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-out">on book</span></td><td><button class="btn btn-sm" onclick="openApp('K. Peters')">Open</button></td></tr>
+
+                <tr><td><strong>P. Davis</strong><div style="font-size:10px;color:var(--c500)">M&amp;G tomorrow</div></td><td>Biscuit · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'P. Davis','Biscuit')">
+                    <option>Applied</option><option>In Review</option><option selected>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-dark">filled ✓</span></td><td><button class="btn btn-sm" onclick="openApp('P. Davis')">Open</button></td></tr>
+
+                <tr><td><strong>S. Williams</strong><div style="font-size:10px;color:var(--c500)">Today 10:30</div></td><td>Biscuit · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'S. Williams','Biscuit')">
+                    <option>Applied</option><option>In Review</option><option>Booked</option><option selected>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-dark">filled ✓</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">M&amp;G</button></td></tr>
+
+                <tr><td><strong>L. Park</strong><div style="font-size:10px;color:var(--c500)">Today 3:30</div></td><td>Luna · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00821</span></td><td><span class="tier-m">Medium</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'L. Park','Luna')">
+                    <option>Applied</option><option>In Review</option><option>Booked</option><option selected>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-dark">filled ✓</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('L. Park','Luna','AID-00821')">M&amp;G</button></td></tr>
+
+                <tr style="background:var(--c50)"><td><strong>L. Marsh</strong><div style="font-size:10px;color:var(--c500)">Missed M&amp;G — staff to follow up</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'L. Marsh','Apollo')">
+                    <option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option selected>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-out">released</span></td><td><button class="btn btn-sm" onclick="openApp('L. Marsh')">Open</button></td></tr>
+
+                <tr><td><strong>M. Patel</strong><div style="font-size:10px;color:var(--c500)">M&amp;G done · contract pending</div></td><td>Kitten litter #4 · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00904</span></td><td><span class="tier-s">Simple</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'M. Patel','Kitten litter #4')">
+                    <option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option selected>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-out">released</span></td><td><button class="btn btn-sm btn-primary" onclick="openContract('M. Patel','Kitten litter #4','AID-00904')">Contract</button></td></tr>
+
+                <tr><td><strong>D. Reed</strong><div style="font-size:10px;color:var(--c500)">Generic profile · no auto-email</div></td><td>Kitten litter #3 · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00903</span></td><td><span class="tier-s">Simple</span></td><td>
+                  <select class="status-sel" onchange="changeStatus(this,'D. Reed','Kitten litter #3')">
+                    <option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option selected>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
+                  </select>
+                </td><td><span class="pill p-out">released</span></td><td><button class="btn btn-sm" onclick="openApp('D. Reed')">Open</button></td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- ─────── IN REVIEW ─────── -->
-      <div id="screen-review" class="screen">
-        <div class="section-title">In Review · Complex applications</div>
-        <div class="info">SPCA contacts adopter via phone or email to discuss specific animal requirements. Outcomes: <em>Approve for M&amp;G</em>, <em>Mark unsuccessful</em>, or <em>Request more info</em>.</div>
+      <!-- ─────── ANIMALS (animal-centric pivot) ─────── -->
+      <div id="screen-animals" class="screen">
+        <div class="section-title">Animals · pipeline view</div>
+        <div class="info">One row per animal. Each shows how many applications it has, who's in M&amp;G, and the next action. Same data as <strong>Applications</strong>, pivoted by animal. Click a row to see all applicants for that animal.</div>
         <div class="panel">
-          <div class="panel-h"><span class="panel-t">Pending review</span><span class="panel-s">2 applications</span></div>
+          <div class="panel-h">
+            <span class="panel-t">Animals at this centre</span><span class="panel-s">7 listed</span>
+            <select style="margin-left:auto"><option>All tiers</option><option>Simple</option><option>Medium</option><option>Complex</option></select>
+            <button class="btn btn-sm btn-outline" onclick="openSBSearch()">+ Search any animal</button>
+          </div>
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>Adopter</th><th>Animal</th><th>Time in review</th><th>Last contact</th><th>Preference</th><th>Action</th></tr></thead>
+              <thead><tr><th>Animal · AID</th><th>Tier</th><th>Applications</th><th>Pipeline</th><th>Days</th><th>Action</th></tr></thead>
               <tbody>
-                <tr><td><strong>J. Lee</strong><div style="font-size:10px;color:var(--c500)">jlee@email.com · 021 555 8821</div></td><td>Apollo</td><td>22 hrs</td><td><span style="color:var(--c500)">Not contacted</span></td><td>Email</td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openReview('J. Lee')">Review →</button></div></td></tr>
-                <tr><td><strong>K. Peters</strong><div style="font-size:10px;color:var(--c500)">kpeters@email.com · 027 555 4419</div></td><td>Duke</td><td>47 hrs</td><td>Email sent 1hr ago</td><td>Phone</td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openReview('K. Peters')">Review →</button></div></td></tr>
+                <tr onclick="openAnimalApps('Kitten litter #4','AID-00904')" style="cursor:pointer">
+                  <td><strong>Kitten litter #4</strong><div style="font-size:10px;color:var(--c500)">Generic kitten profile</div></td>
+                  <td><span class="tier-s">Simple</span></td>
+                  <td><strong>2</strong> <span style="color:var(--c500);font-size:11px">/ 3 slots</span></td>
+                  <td><span class="pill p-dark">1 Adopted</span> <span class="pill p-light">1 Applied</span></td>
+                  <td>8d</td>
+                  <td><button class="btn btn-sm">View →</button></td>
+                </tr>
+                <tr onclick="openAnimalApps('Biscuit','AID-00847')" style="cursor:pointer">
+                  <td><strong>Biscuit</strong><div style="font-size:10px;color:var(--c500)">Labrador · 3yo</div></td>
+                  <td><span class="tier-m">Medium</span></td>
+                  <td><strong>2</strong> <span style="color:var(--c500);font-size:11px">/ 3 slots</span></td>
+                  <td><span class="pill p-dark">1 M&amp;G today</span> <span class="pill p-mid">1 Booked</span></td>
+                  <td>14d</td>
+                  <td><button class="btn btn-sm">View →</button></td>
+                </tr>
+                <tr onclick="openAnimalApps('Luna','AID-00821')" style="cursor:pointer">
+                  <td><strong>Luna</strong><div style="font-size:10px;color:var(--c500)">DSH · 2yo</div></td>
+                  <td><span class="tier-m">Medium</span></td>
+                  <td><strong>1</strong> <span style="color:var(--c500);font-size:11px">/ 3 slots</span></td>
+                  <td><span class="pill p-dark">1 M&amp;G today</span></td>
+                  <td>11d</td>
+                  <td><button class="btn btn-sm">View →</button></td>
+                </tr>
+                <tr onclick="openAnimalApps('Apollo','AID-00712')" style="cursor:pointer">
+                  <td><strong>Apollo</strong><div style="font-size:10px;color:var(--c500)">Ex-racehorse</div></td>
+                  <td><span class="tier-c">Complex</span></td>
+                  <td><strong>2</strong> <span style="color:var(--c500);font-size:11px">/ 3 slots</span></td>
+                  <td><span class="pill p-mid">1 In Review</span> <span class="pill p-warn">1 No Show</span></td>
+                  <td>62d</td>
+                  <td><button class="btn btn-sm">View →</button></td>
+                </tr>
+                <tr onclick="openAnimalApps('Duke','AID-00688')" style="cursor:pointer">
+                  <td><strong>Duke</strong><div style="font-size:10px;color:var(--c500)">GSD with conditions</div></td>
+                  <td><span class="tier-c">Complex</span></td>
+                  <td><strong>1</strong> <span style="color:var(--c500);font-size:11px">/ 3 slots</span></td>
+                  <td><span class="pill p-mid">1 In Review</span></td>
+                  <td>34d</td>
+                  <td><button class="btn btn-sm">View →</button></td>
+                </tr>
+                <tr onclick="openAnimalApps('Bella','AID-00833')" style="cursor:pointer">
+                  <td><strong>Bella</strong><div style="font-size:10px;color:var(--c500)">DLH · 4yo</div></td>
+                  <td><span class="tier-m">Medium</span></td>
+                  <td><strong>0</strong> <span style="color:var(--c500);font-size:11px">/ 3 slots</span></td>
+                  <td><span style="color:var(--c500);font-size:11px">No applications yet</span></td>
+                  <td>9d</td>
+                  <td><button class="btn btn-sm">View →</button></td>
+                </tr>
+                <tr onclick="openAnimalApps('Salt &amp; Pepper','AID-00858/859')" style="cursor:pointer">
+                  <td><strong>Salt &amp; Pepper</strong> <span class="group-badge">BONDED</span><div style="font-size:10px;color:var(--c500)">Bonded pair · adopt together</div></td>
+                  <td><span class="tier-m">Medium</span></td>
+                  <td><strong>0</strong> <span style="color:var(--c500);font-size:11px">/ 3 slots</span></td>
+                  <td><span style="color:var(--c500);font-size:11px">No applications yet</span></td>
+                  <td>15d</td>
+                  <td><button class="btn btn-sm">View →</button></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -380,7 +494,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
       <!-- ─────── BOOKINGS ─────── -->
       <div id="screen-bookings" class="screen">
         <div class="section-title">Bookings · Meet &amp; Greet</div>
-        <div class="info">Portal is the source of truth · Outlook view-only. Slot released on cancel / no-show / withdrawn / unsuccessful. Staff handle no-show follow-up directly — mark as Unsuccessful or Rebook M&amp;G from the booking row.</div>
+        <div class="info">Portal is the source of truth · Outlook view-only. Slot released on cancel / no-show / withdrawn / unsuccessful. Status changes happen on the Applications row.</div>
         <div class="panel">
           <div class="panel-h"><span class="panel-t">Today · Tue 22 Apr</span><button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openSBSearch()">+ Walk-in M&amp;G</button></div>
           <div class="tbl-wrap">
@@ -389,7 +503,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
               <tbody>
                 <tr><td>9:00am</td><td>M. Patel</td><td>Kitten litter</td><td><span class="pill p-dark">Attended</span></td><td><button class="btn btn-sm" onclick="openContract('M. Patel','Kitten litter','AID-00904')">→ Contract</button></td></tr>
                 <tr><td>10:30am</td><td>S. Williams</td><td>Biscuit</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm" onclick="showToast('Reschedule M&G — slot stays filled, time changes')">Reschedule</button></td></tr>
-                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm btn-primary" onclick="openNoShowModal('R. Chen','Apollo','AID-00712')">Resolve &rarr;</button></td></tr>
+                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm" onclick="goScreen('applications',document.querySelector('[onclick*=applications]'))">→ Applications</button></td></tr>
                 <tr><td>2:00pm</td><td>T. Nguyen</td><td>Puppy litter</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm" onclick="showToast('Reschedule M&G')">Reschedule</button></td></tr>
                 <tr><td>3:30pm</td><td>L. Park</td><td>Luna</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm" onclick="showToast('Reschedule M&G')">Reschedule</button></td></tr>
               </tbody>
@@ -801,29 +915,26 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
   </div>
 </div>
 
-<!-- No-show resolve (inline in Bookings) -->
-<div class="modal-bg" id="modal-noshow">
-  <div class="modal">
-    <div class="modal-h"><div class="modal-t">No Show · <span id="ns-name"></span></div><button class="modal-x" onclick="closeModal('modal-noshow')">×</button></div>
+<!-- Animal · all applications for this animal -->
+<div class="modal-bg" id="modal-animalapps">
+  <div class="modal modal-lg">
+    <div class="modal-h"><div class="modal-t">Animal · <span id="aa-name"></span> <span style="color:var(--c500);font-weight:400;font-family:monospace;font-size:11px;margin-left:6px" id="aa-aid"></span></div><button class="modal-x" onclick="closeModal('modal-animalapps')">×</button></div>
     <div class="modal-body">
-      <div class="dr"><div class="dr-l">Adopter</div><div class="dr-v" id="ns-adopter">—</div></div>
-      <div class="dr"><div class="dr-l">Animal · AID</div><div class="dr-v" id="ns-animal">—</div></div>
-      <div class="dr"><div class="dr-l">Slot</div><div class="dr-v"><span class="pill p-out">Released</span></div></div>
-      <div class="note" style="margin-top:10px">Staff contact the adopter directly (phone or email) outside the system. Once you've made contact, choose an outcome below.</div>
-      <div style="margin-top:14px">
-        <div style="border:1px solid var(--c200);border-radius:6px;padding:12px;margin-bottom:8px">
-          <div style="display:flex;align-items:center;gap:10px"><input type="radio" name="ns-out" id="ns-rebook" value="rebook" checked><label for="ns-rebook" style="font-weight:600;font-size:13px;cursor:pointer">Rebook Meet &amp; Greet</label></div>
-          <div style="font-size:11px;color:var(--c500);padding-left:24px;margin-top:4px">Adopter responded. Set a new M&amp;G date — slot re-fills on booking confirmed.</div>
-        </div>
-        <div style="border:1px solid var(--c200);border-radius:6px;padding:12px">
-          <div style="display:flex;align-items:center;gap:10px"><input type="radio" name="ns-out" id="ns-unsuccessful" value="unsuccessful"><label for="ns-unsuccessful" style="font-weight:600;font-size:13px;cursor:pointer">Mark Unsuccessful</label></div>
-          <div style="font-size:11px;color:var(--c500);padding-left:24px;margin-top:4px">No response or adopter withdrew. Application closed — adopter cannot reapply for this animal.</div>
-        </div>
+      <div class="info">All applications for this animal. Change status inline — same as the Applications screen, just filtered to one animal.</div>
+      <div id="aa-summary" style="display:flex;gap:14px;padding:10px 12px;background:var(--c50);border:1px solid var(--c200);border-radius:6px;margin-bottom:12px;font-size:12px">
+        <div><span style="color:var(--c500);font-size:11px">Slots</span> <strong id="aa-slots">—</strong></div>
+        <div><span style="color:var(--c500);font-size:11px">Total applications</span> <strong id="aa-total">—</strong></div>
+        <div><span style="color:var(--c500);font-size:11px">Days in care</span> <strong id="aa-days">—</strong></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Adopter</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody id="aa-rows"></tbody>
+        </table>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModal('modal-noshow')">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmNoShow()">Confirm →</button>
+      <button class="btn" onclick="closeModal('modal-animalapps')">Close</button>
     </div>
   </div>
 </div>
@@ -923,7 +1034,7 @@ function goScreen(id,navEl){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   var s=document.getElementById('screen-'+id);if(s)s.classList.add('active');
   if(navEl)navEl.classList.add('active');
-  var titles={dashboard:'Dashboard',queue:'Application Queue',review:'In Review',bookings:'Bookings',dna:'DNA Reviews',centresettings:'Centre Settings',allcentres:'All Centres',system:'System Settings'};
+  var titles={dashboard:'Dashboard',applications:'Applications',animals:'Animals',bookings:'Bookings',dna:'DNA Reviews',centresettings:'Centre Settings',allcentres:'All Centres',system:'System Settings'};
   document.getElementById('tb-title').textContent=titles[id]||id;
 }
 
@@ -1053,7 +1164,7 @@ function setMGOutcome(val){
   if(val==='same'){btn.innerHTML='Continue to Contract &amp; Pay →';btn.className='btn btn-primary'}
   else if(val==='swap'){btn.innerHTML='Confirm swap &amp; continue →';btn.className='btn btn-primary'}
   else if(val==='multi'){btn.innerHTML='Continue · multi-AID basket →';btn.className='btn btn-primary'}
-  else if(val==='noshow'){btn.innerHTML='Flag No Show → Resolve';btn.className='btn btn-danger'}
+  else if(val==='noshow'){btn.innerHTML='Mark No Show';btn.className='btn btn-danger'}
   else{btn.innerHTML='Mark withdrawn';btn.className='btn btn-outline'}
 }
 function clearSwapPick(){swapPicked=null;document.getElementById('swap-picked').style.display='none'}
@@ -1077,7 +1188,7 @@ function confirmMGOutcome(){
     showToast('Multi-AID mode. Add additional AIDs via search in basket.');
   }else if(val==='noshow'){
     closeModal('modal-mg');
-    openNoShowModal(mgContext.adopter,mgContext.origAnimal,mgContext.origAid);
+    showToast(mgContext.adopter+' marked No Show. Slot released. Open Applications to change status (Booked to rebook, or Unsuccessful).');
   }else{
     showToast(mgContext.adopter+' withdrew. Slot released.');closeModal('modal-mg');
   }
@@ -1124,24 +1235,75 @@ function triggerContract(){showToast('Triggered: PID retrieved · person record 
 function updateAcceptState(){var btn=document.getElementById('pay-btn');btn.disabled=!document.getElementById('chk-contract').checked}
 function confirmPay(){showToast('Payment processed via ePOS · Animals → Adopted · Day 1 email triggered.');closeModal('modal-contract')}
 
-/* ─── No-show resolve (in Bookings) ─── */
-var nsContext={};
-function openNoShowModal(adopter,animal,aid){
-  nsContext={adopter,animal,aid};
-  document.getElementById('ns-name').textContent=adopter;
-  document.getElementById('ns-adopter').textContent=adopter;
-  document.getElementById('ns-animal').textContent=animal+' · '+aid;
-  document.getElementById('ns-rebook').checked=true;
-  openModal('modal-noshow');
+/* ─── Inline status change (Applications screen) ─── */
+function changeStatus(sel, adopter, animal){
+  var newStatus = sel.value;
+  // Reflect status visually on the dropdown (slot pill changes via row reorder/refresh in real impl)
+  sel.className = 'status-sel ' + statusClass(newStatus);
+  var msgs = {
+    'Applied':      adopter+' → Applied',
+    'In Review':    adopter+' → In Review (Complex). Staff to contact via phone/email.',
+    'Booked':       adopter+' → Booked. Slot fills on booking confirmation.',
+    'M&G Today':    adopter+' → M&G Today.',
+    'No Show':      adopter+' did not attend M&G. Slot released. Change status to Booked (rebook) or Unsuccessful when resolved.',
+    'Withdrawn':    adopter+' withdrew. Slot released. Adopter can reapply.',
+    'Unsuccessful': adopter+' marked Unsuccessful. Slot released. Cannot reapply for '+animal+'.',
+    'Adopted':      adopter+' marked Adopted ✓ '+animal
+  };
+  showToast(msgs[newStatus] || (adopter+' → '+newStatus));
 }
-function confirmNoShow(){
-  var val=document.querySelector('input[name="ns-out"]:checked').value;
-  if(val==='rebook'){
-    showToast(nsContext.adopter+' · Rebooked M&G. Slot re-fills on booking confirmed.');
-  }else{
-    showToast(nsContext.adopter+' · Marked Unsuccessful. Slot stays free. Adopter cannot reapply for '+nsContext.animal+'.');
+function statusClass(s){
+  if(s==='No Show') return 's-warn';
+  if(s==='Adopted'||s==='M&G Today') return 's-dark';
+  if(s==='In Review'||s==='Booked') return 's-mid';
+  if(s==='Withdrawn'||s==='Unsuccessful') return 's-out';
+  return '';
+}
+
+/* ─── Animal applications drawer (Animals → row click) ─── */
+var animalAppsData = {
+  'Kitten litter #4':[
+    {who:'A. Mitchell',status:'Applied',note:'Applied 2hrs ago'},
+    {who:'M. Patel',status:'Adopted',note:'M&G done · contract pending'}
+  ],
+  'Biscuit':[
+    {who:'P. Davis',status:'Booked',note:'M&G tomorrow'},
+    {who:'S. Williams',status:'M&G Today',note:'Today 10:30am'}
+  ],
+  'Luna':[
+    {who:'L. Park',status:'M&G Today',note:'Today 3:30pm'}
+  ],
+  'Apollo':[
+    {who:'J. Lee',status:'In Review',note:'22hrs · email preferred'},
+    {who:'L. Marsh',status:'No Show',note:'Missed M&G — staff to follow up'}
+  ],
+  'Duke':[
+    {who:'K. Peters',status:'In Review',note:'47hrs · phone preferred'}
+  ],
+  'Bella':[],
+  'Salt &amp; Pepper':[]
+};
+function openAnimalApps(name, aid){
+  document.getElementById('aa-name').textContent = name;
+  document.getElementById('aa-aid').textContent = aid;
+  var apps = animalAppsData[name] || [];
+  document.getElementById('aa-slots').textContent = apps.length + ' / 3';
+  document.getElementById('aa-total').textContent = apps.length;
+  document.getElementById('aa-days').textContent = '—';
+  var rowsEl = document.getElementById('aa-rows');
+  if(apps.length===0){
+    rowsEl.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--c500);padding:20px">No applications yet for this animal.</td></tr>';
+  } else {
+    rowsEl.innerHTML = apps.map(function(a){
+      var opts = ['Applied','In Review','Booked','M&G Today','No Show','Withdrawn','Unsuccessful','Adopted'].map(function(s){
+        return '<option'+(s===a.status?' selected':'')+'>'+s+'</option>';
+      }).join('');
+      return '<tr><td><strong>'+a.who+'</strong></td>'
+           + '<td><select class="status-sel '+statusClass(a.status)+'" onchange="changeStatus(this,\''+a.who+'\',\''+name+'\')">'+opts+'</select></td>'
+           + '<td style="font-size:11px;color:var(--c500)">'+a.note+'</td></tr>';
+    }).join('');
   }
-  closeModal('modal-noshow');
+  openModal('modal-animalapps');
 }
 
 /* ─── DNA ─── */
