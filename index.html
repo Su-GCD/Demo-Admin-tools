@@ -237,7 +237,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
         <div class="role-opt" id="rb-cm" onclick="selectRole('cm',this)">Centre Manager</div>
         <div class="role-opt" id="rb-admin" onclick="selectRole('admin',this)">Admin</div>
       </div>
-      <div class="role-note" id="role-note">Frontline operational user. Daily casework: applications, M&amp;G, no-show watch, contracts, payments.</div>
+      <div class="role-note" id="role-note">Frontline operational user. Daily casework: applications, M&amp;G, bookings, contracts, payments.</div>
     </div>
     <button class="btn btn-primary" style="width:100%;padding:10px;font-size:13px;margin-top:8px" onclick="doLogin()">Sign in →</button>
   </div>
@@ -263,8 +263,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
       <div class="nav-item" onclick="goScreen('queue',this)"><span class="nav-icon">≡</span>Application Queue<span class="nav-badge">7</span></div>
       <div class="nav-item" onclick="goScreen('review',this)"><span class="nav-icon">⌕</span>In Review<span class="nav-badge">2</span></div>
       <div class="nav-item" onclick="goScreen('bookings',this)"><span class="nav-icon">◷</span>Bookings</div>
-      <div class="nav-item" onclick="goScreen('noshow',this)"><span class="nav-icon">!</span>No-Show Watch<span class="nav-badge outline">3</span></div>
-      <div class="nav-item" onclick="goScreen('animals',this)"><span class="nav-icon">◈</span>Animals &amp; Slots</div>
+
 
       <!-- Centre Manager + Admin only -->
       <div class="nav-section role-cm role-admin" style="display:none">Centre</div>
@@ -304,7 +303,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
             <table>
               <thead><tr><th>Priority</th><th>Item</th><th>Adopter / animal</th><th>Action</th></tr></thead>
               <tbody>
-                <tr><td><span class="pill p-warn">No-show · 5hr left</span></td><td>48hr watch closing</td><td>L. Marsh · Apollo</td><td><button class="btn btn-sm btn-primary" onclick="goScreen('noshow',document.querySelector('[onclick*=noshow]'))">Open watch →</button></td></tr>
+                <tr><td><span class="pill p-warn">No Show</span></td><td>Follow up required</td><td>L. Marsh · Apollo</td><td><button class="btn btn-sm btn-primary" onclick="goScreen('bookings',document.querySelector('[onclick*=bookings]'))">Go to Bookings →</button></td></tr>
                 <tr><td><span class="pill p-mid">In Review</span></td><td>Complex application</td><td>K. Peters · Duke (47hrs)</td><td><button class="btn btn-sm btn-primary" onclick="openReview('K. Peters')">Review →</button></td></tr>
                 <tr><td><span class="pill p-mid">M&amp;G in 30min</span></td><td>10:30am appointment</td><td>S. Williams · Biscuit</td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">Open M&amp;G</button></td></tr>
                 <tr class="role-cm role-admin" style="display:none"><td><span class="pill p-light">DNA flag</span></td><td>Pending review</td><td>A. Johnson</td><td><button class="btn btn-sm" onclick="goScreen('dna',document.querySelector('[onclick*=dna]'))">Review →</button></td></tr>
@@ -324,7 +323,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
               <tbody>
                 <tr><td>9:00am</td><td>M. Patel</td><td>Kitten litter</td><td><span class="pill p-dark">Done</span></td><td><button class="btn btn-sm" onclick="openContract('M. Patel','Kitten litter','AID-00904')">→ Contract</button></td></tr>
                 <tr><td>10:30am</td><td>S. Williams</td><td>Biscuit</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">Open M&amp;G</button></td></tr>
-                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm" onclick="goScreen('noshow',document.querySelector('[onclick*=noshow]'))">Watch →</button></td></tr>
+                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm btn-primary" onclick="openNoShowModal('R. Chen','Apollo','AID-00712')">Resolve &rarr;</button></td></tr>
                 <tr><td>2:00pm</td><td>T. Nguyen</td><td>Puppy litter</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('T. Nguyen','Puppy litter','AID-00911')">Open M&amp;G</button></td></tr>
                 <tr><td>3:30pm</td><td>L. Park</td><td>Luna</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('L. Park','Luna','AID-00821')">Open M&amp;G</button></td></tr>
               </tbody>
@@ -353,7 +352,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
                 <tr><td><strong>K. Peters</strong><div style="font-size:10px;color:var(--c500)">Applied 47hrs</div></td><td>Duke · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00688</span></td><td><span class="tier-c">Complex</span></td><td><span class="pill p-mid">In Review</span></td><td><span class="pill p-out">on book</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openReview('K. Peters')">Review →</button></div></td></tr>
                 <tr><td><strong>S. Williams</strong><div style="font-size:10px;color:var(--c500)">M&amp;G today 10:30</div></td><td>Biscuit · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td><span class="pill p-dark">M&amp;G today</span></td><td><span class="pill p-dark">filled ✓</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">Open M&amp;G</button></div></td></tr>
                 <tr><td><strong>L. Park</strong><div style="font-size:10px;color:var(--c500)">M&amp;G today 3:30</div></td><td>Luna · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00821</span></td><td><span class="tier-m">Medium</span></td><td><span class="pill p-dark">M&amp;G today</span></td><td><span class="pill p-dark">filled ✓</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openMGAction('L. Park','Luna','AID-00821')">Open M&amp;G</button></div></td></tr>
-                <tr style="background:var(--c50)"><td><strong>L. Marsh</strong><div style="font-size:10px;color:var(--c500)">No show · 43hrs</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td><span class="pill p-warn">No Show · 5hr left</span></td><td><span class="pill p-out">released</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="goScreen('noshow',document.querySelector('[onclick*=noshow]'))">Watch →</button></div></td></tr>
+                <tr style="background:var(--c50)"><td><strong>L. Marsh</strong><div style="font-size:10px;color:var(--c500)">No show · needs follow-up</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td><span class="pill p-warn">No Show</span></td><td><span class="pill p-out">released</span></td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="openNoShowModal('L. Marsh','Apollo','AID-00712')">Resolve →</button></div></td></tr>
               </tbody>
             </table>
           </div>
@@ -381,7 +380,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
       <!-- ─────── BOOKINGS ─────── -->
       <div id="screen-bookings" class="screen">
         <div class="section-title">Bookings · Meet &amp; Greet</div>
-        <div class="info">Portal is the source of truth · Outlook view-only. Slot consumed on booking, released on cancel/no-show/withdrawn/unsuccessful.</div>
+        <div class="info">Portal is the source of truth · Outlook view-only. Slot released on cancel / no-show / withdrawn / unsuccessful. Staff handle no-show follow-up directly — mark as Unsuccessful or Rebook M&amp;G from the booking row.</div>
         <div class="panel">
           <div class="panel-h"><span class="panel-t">Today · Tue 22 Apr</span><button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openSBSearch()">+ Walk-in M&amp;G</button></div>
           <div class="tbl-wrap">
@@ -390,7 +389,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
               <tbody>
                 <tr><td>9:00am</td><td>M. Patel</td><td>Kitten litter</td><td><span class="pill p-dark">Attended</span></td><td><button class="btn btn-sm" onclick="openContract('M. Patel','Kitten litter','AID-00904')">→ Contract</button></td></tr>
                 <tr><td>10:30am</td><td>S. Williams</td><td>Biscuit</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm" onclick="showToast('Reschedule M&G — slot stays filled, time changes')">Reschedule</button></td></tr>
-                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm" onclick="goScreen('noshow',document.querySelector('[onclick*=noshow]'))">Watch →</button></td></tr>
+                <tr><td>11:00am</td><td>R. Chen</td><td>Apollo</td><td><span class="pill p-warn">No Show</span></td><td><button class="btn btn-sm btn-primary" onclick="openNoShowModal('R. Chen','Apollo','AID-00712')">Resolve &rarr;</button></td></tr>
                 <tr><td>2:00pm</td><td>T. Nguyen</td><td>Puppy litter</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm" onclick="showToast('Reschedule M&G')">Reschedule</button></td></tr>
                 <tr><td>3:30pm</td><td>L. Park</td><td>Luna</td><td><span class="pill p-mid">Confirmed</span></td><td><button class="btn btn-sm" onclick="showToast('Reschedule M&G')">Reschedule</button></td></tr>
               </tbody>
@@ -400,128 +399,6 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
       </div>
 
       <!-- ─────── NO-SHOW WATCH (multi-case) ─────── -->
-      <div id="screen-noshow" class="screen">
-        <div class="section-title">No-Show watch · 48hr follow-up</div>
-        <div class="info">Mark No Show → animal slot released → 48hr window. Staff <strong>must log a contact attempt</strong>. If no response in 48hrs, application auto-marks <strong>Unsuccessful</strong>. Generic kitten profiles skip the email comms.</div>
-
-        <!-- Case 1: 5 hours left -->
-        <div class="case-card urgent">
-          <div class="case-head">
-            <div>
-              <div style="font-weight:600;font-size:13px">L. Marsh · <span style="color:var(--c500);font-weight:400">Apollo · AID-00712</span></div>
-              <div style="font-size:11px;color:var(--c500)">lmarsh@email.com · 021 555 9911 · M&amp;G missed 43hrs ago</div>
-            </div>
-            <div style="margin-left:auto"><span class="pill p-warn">5 hrs remaining</span></div>
-          </div>
-          <div class="timeline">
-            <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Missed</div><div class="tl-sub">43hrs ago</div></div>
-            <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Flagged</div><div class="tl-sub">By J. Smith</div></div>
-            <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Email · 41hr</div><div class="tl-sub">No reply</div></div>
-            <div class="tl-step current"><div class="tl-dot">4</div><div class="tl-label">Phone · 18hr</div><div class="tl-sub">VM left</div></div>
-            <div class="tl-step failed"><div class="tl-dot">5</div><div class="tl-label">Auto-fail</div><div class="tl-sub">in 5hrs</div></div>
-          </div>
-          <div class="two-col" style="margin-top:8px">
-            <div>
-              <div class="f-label">Log new contact attempt</div>
-              <select style="width:100%;margin-bottom:6px"><option>Phone · spoke to adopter</option><option>Phone · left voicemail</option><option>Email sent</option><option>SMS sent</option></select>
-              <textarea rows="2" placeholder="Brief note…"></textarea>
-              <button class="btn btn-sm btn-primary" style="margin-top:6px" onclick="logContact('L. Marsh')">Log attempt</button>
-            </div>
-            <div>
-              <div class="f-label">Outcomes</div>
-              <button class="btn btn-primary" style="width:100%;margin-bottom:6px" onclick="rebook('L. Marsh','Apollo')">Adopter responded · Rebook M&amp;G</button>
-              <button class="btn btn-outline" style="width:100%" onclick="markUnsuccessfulFromNoShow('L. Marsh','Apollo')">Mark Unsuccessful now</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Case 2: 28 hours left -->
-        <div class="case-card">
-          <div class="case-head">
-            <div>
-              <div style="font-weight:600;font-size:13px">R. Chen · <span style="color:var(--c500);font-weight:400">Apollo · AID-00712</span></div>
-              <div style="font-size:11px;color:var(--c500)">rchen@email.com · 021 555 7733 · M&amp;G missed 20hrs ago</div>
-            </div>
-            <div style="margin-left:auto"><span class="pill p-out">28 hrs remaining</span></div>
-          </div>
-          <div class="timeline">
-            <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Missed</div><div class="tl-sub">20hrs ago</div></div>
-            <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Flagged</div></div>
-            <div class="tl-step current"><div class="tl-dot">3</div><div class="tl-label">Contact</div><div class="tl-sub">no attempts yet</div></div>
-            <div class="tl-step"><div class="tl-dot">4</div><div class="tl-label">Response</div></div>
-            <div class="tl-step failed"><div class="tl-dot">5</div><div class="tl-label">Auto-fail</div></div>
-          </div>
-          <div class="two-col" style="margin-top:8px">
-            <div>
-              <div class="f-label">Log new contact attempt</div>
-              <select style="width:100%;margin-bottom:6px"><option>Phone · spoke to adopter</option><option>Phone · left voicemail</option><option>Email sent</option><option>SMS sent</option></select>
-              <textarea rows="2" placeholder="Brief note…"></textarea>
-              <button class="btn btn-sm btn-primary" style="margin-top:6px" onclick="logContact('R. Chen')">Log attempt</button>
-            </div>
-            <div>
-              <div class="f-label">Outcomes</div>
-              <button class="btn btn-primary" style="width:100%;margin-bottom:6px" onclick="rebook('R. Chen','Apollo')">Adopter responded · Rebook M&amp;G</button>
-              <button class="btn btn-outline" style="width:100%" onclick="markUnsuccessfulFromNoShow('R. Chen','Apollo')">Mark Unsuccessful now</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Case 3: kitten generic, comms suppressed -->
-        <div class="case-card">
-          <div class="case-head">
-            <div>
-              <div style="font-weight:600;font-size:13px">D. Reed · <span style="color:var(--c500);font-weight:400">Kitten litter #3 · AID-00903</span></div>
-              <div style="font-size:11px;color:var(--c500)">dreed@email.com · M&amp;G missed 8hrs ago · <span class="pill p-light" style="margin-left:6px">Generic profile · email suppressed</span></div>
-            </div>
-            <div style="margin-left:auto"><span class="pill p-out">40 hrs remaining</span></div>
-          </div>
-          <div class="timeline">
-            <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Missed</div></div>
-            <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Flagged</div></div>
-            <div class="tl-step current"><div class="tl-dot">3</div><div class="tl-label">Contact</div></div>
-            <div class="tl-step"><div class="tl-dot">4</div><div class="tl-label">Response</div></div>
-            <div class="tl-step failed"><div class="tl-dot">5</div><div class="tl-label">Auto-fail</div><div class="tl-sub">no email</div></div>
-          </div>
-          <div class="note" style="margin-top:6px;margin-bottom:0">Generic kitten profile — adopter is <strong>not</strong> auto-emailed an unsuccessful notice if the watch closes. Other actions still apply.</div>
-          <div class="two-col" style="margin-top:8px">
-            <div>
-              <div class="f-label">Log new contact attempt</div>
-              <select style="width:100%;margin-bottom:6px"><option>Phone · spoke to adopter</option><option>Phone · left voicemail</option><option>Email sent</option></select>
-              <textarea rows="2" placeholder="Brief note…"></textarea>
-              <button class="btn btn-sm btn-primary" style="margin-top:6px" onclick="logContact('D. Reed')">Log attempt</button>
-            </div>
-            <div>
-              <div class="f-label">Outcomes</div>
-              <button class="btn btn-primary" style="width:100%;margin-bottom:6px" onclick="rebook('D. Reed','Kitten litter')">Adopter responded · Rebook M&amp;G</button>
-              <button class="btn btn-outline" style="width:100%" onclick="markUnsuccessfulFromNoShow('D. Reed','Kitten litter')">Close watch (no email)</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ─────── ANIMALS &amp; SLOTS ─────── -->
-      <div id="screen-animals" class="screen">
-        <div class="section-title">Animals · slots &amp; groups</div>
-        <div class="info">3 slots per animal. Slot fills <strong>only when M&amp;G is booked</strong>. Frees on cancel/no-show/withdrawn/unsuccessful/swap. Bonded groups share one application — partial pickup allowed at M&amp;G.</div>
-        <div class="panel">
-          <div class="panel-h"><span class="panel-t">Animals at this centre</span><button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="openSBSearch()">+ Search all animals</button></div>
-          <div class="tbl-wrap">
-            <table>
-              <thead><tr><th>Animal</th><th>AID</th><th>Tier</th><th>Slots</th><th>Status</th><th>Days</th><th>Action</th></tr></thead>
-              <tbody>
-                <tr><td><strong>Kitten litter #4</strong><div style="font-size:10px;color:var(--c500)">Generic profile</div></td><td><span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00904</span></td><td><span class="tier-s">Simple</span></td><td><div class="slot-bar"><div class="slot-cell"></div><div class="slot-cell"></div><div class="slot-cell"></div><span class="slot-text">0 / 3</span></div></td><td><span class="pill p-light">Available</span></td><td>8d</td><td><button class="btn btn-sm" onclick="openAnimal('Kitten litter #4','AID-00904','Simple')">Open</button></td></tr>
-                <tr><td><strong>Biscuit</strong><div style="font-size:10px;color:var(--c500)">Labrador · 3yo</div></td><td><span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td><div class="slot-bar"><div class="slot-cell booked"></div><div class="slot-cell booked"></div><div class="slot-cell booked"></div><span class="slot-text">3 / 3</span></div></td><td><span class="pill p-mid">Pending</span></td><td>14d</td><td><button class="btn btn-sm" onclick="openAnimal('Biscuit','AID-00847','Medium')">Open</button></td></tr>
-                <tr><td><strong>Luna</strong><div style="font-size:10px;color:var(--c500)">DSH · 2yo</div></td><td><span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00821</span></td><td><span class="tier-m">Medium</span></td><td><div class="slot-bar"><div class="slot-cell booked"></div><div class="slot-cell"></div><div class="slot-cell"></div><span class="slot-text">1 / 3</span></div></td><td><span class="pill p-light">Available</span></td><td>11d</td><td><button class="btn btn-sm" onclick="openAnimal('Luna','AID-00821','Medium')">Open</button></td></tr>
-                <tr><td><strong>Bella</strong><div style="font-size:10px;color:var(--c500)">DLH · 4yo</div></td><td><span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00833</span></td><td><span class="tier-m">Medium</span></td><td><div class="slot-bar"><div class="slot-cell"></div><div class="slot-cell"></div><div class="slot-cell"></div><span class="slot-text">0 / 3</span></div></td><td><span class="pill p-light">Available</span></td><td>9d</td><td><button class="btn btn-sm" onclick="openAnimal('Bella','AID-00833','Medium')">Open</button></td></tr>
-                <tr><td><strong>Apollo</strong><div style="font-size:10px;color:var(--c500)">Ex-racehorse</div></td><td><span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td><div class="slot-bar"><div class="slot-cell"></div><div class="slot-cell"></div><div class="slot-cell"></div><span class="slot-text">0 / 3</span></div></td><td><span class="pill p-light">Available</span></td><td>62d</td><td><button class="btn btn-sm" onclick="openAnimal('Apollo','AID-00712','Complex')">Open</button></td></tr>
-                <tr style="background:var(--c50)"><td><strong>Apple, Orange &amp; Pear</strong> <span class="group-badge">GROUP</span><div style="font-size:10px;color:var(--c500)">3 fowls · listed as 1 on website</div></td><td><span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-660693</span><span style="font-size:10px;color:var(--c500);margin-left:4px">+2 sub</span></td><td><span class="tier-s">Simple</span></td><td><div class="slot-bar"><div class="slot-cell booked"></div><div class="slot-cell"></div><div class="slot-cell"></div><span class="slot-text">1 / 3</span></div></td><td><span class="pill p-light">Available</span></td><td>22d</td><td><button class="btn btn-sm btn-primary" onclick="openGroup()">Open group</button></td></tr>
-                <tr><td><strong>Salt &amp; Pepper</strong> <span class="group-badge">BONDED</span><div style="font-size:10px;color:var(--c500)">Bonded pair · cannot separate</div></td><td><span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00858/859</span></td><td><span class="tier-m">Medium</span></td><td><div class="slot-bar"><div class="slot-cell"></div><div class="slot-cell"></div><div class="slot-cell"></div><span class="slot-text">0 / 3</span></div></td><td><span class="pill p-light">Available</span></td><td>15d</td><td><button class="btn btn-sm" onclick="openBonded()">Open bonded</button></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
       <!-- ─────── DNA ─────── -->
       <div id="screen-dna" class="screen">
         <div class="section-title">DNA flag review</div>
@@ -577,7 +454,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
         <div class="panel">
           <div class="panel-h"><span class="panel-t">Centre exceptions</span></div>
           <div style="padding:12px 14px">
-            <div class="dr"><div class="dr-l">Slot cap override</div><div class="dr-v">Use animal-by-animal in Animals &amp; Slots</div></div>
+            <div class="dr"><div class="dr-l">Slot cap override</div><div class="dr-v">Managed per animal in back-end system</div></div>
             <div class="dr"><div class="dr-l">Walk-in policy</div><div class="dr-v"><select><option>Allowed</option><option>Not allowed</option></select></div></div>
             <div class="dr"><div class="dr-l">Centre status</div><div class="dr-v"><span class="pill p-light">Open</span></div></div>
           </div>
@@ -723,10 +600,10 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
         <div style="font-size:11px;color:var(--c500);padding-left:24px;margin-top:4px">Add additional AIDs to the basket. Each AID gets its own contract. Useful for partial group pickup (e.g. Apple + Orange but not Pear).</div>
       </div>
 
-      <div style="border:1px solid var(--c200);border-radius:6px;padding:12px;margin-bottom:8px">
+        <div style="border:1px solid var(--c200);border-radius:6px;padding:12px;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:10px"><input type="radio" name="mg-out" id="mg-noshow" value="noshow" onchange="setMGOutcome('noshow')"><label for="mg-noshow" style="font-weight:600;font-size:13px;cursor:pointer">No show</label></div>
-        <div style="font-size:11px;color:var(--c500);padding-left:24px;margin-top:4px">Enters 48hr no-show watch.</div>
-      </div>
+        <div style="font-size:11px;color:var(--c500);padding-left:24px;margin-top:4px">Slot released. Staff follow up directly — resolve via Bookings as Unsuccessful or Rebook M&amp;G.</div>
+        </div>
 
       <div style="border:1px solid var(--c200);border-radius:6px;padding:12px">
         <div style="display:flex;align-items:center;gap:10px"><input type="radio" name="mg-out" id="mg-withdraw" value="withdraw" onchange="setMGOutcome('withdraw')"><label for="mg-withdraw" style="font-weight:600;font-size:13px;cursor:pointer">Adopter withdrew at M&amp;G</label></div>
@@ -924,6 +801,33 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
   </div>
 </div>
 
+<!-- No-show resolve (inline in Bookings) -->
+<div class="modal-bg" id="modal-noshow">
+  <div class="modal">
+    <div class="modal-h"><div class="modal-t">No Show · <span id="ns-name"></span></div><button class="modal-x" onclick="closeModal('modal-noshow')">×</button></div>
+    <div class="modal-body">
+      <div class="dr"><div class="dr-l">Adopter</div><div class="dr-v" id="ns-adopter">—</div></div>
+      <div class="dr"><div class="dr-l">Animal · AID</div><div class="dr-v" id="ns-animal">—</div></div>
+      <div class="dr"><div class="dr-l">Slot</div><div class="dr-v"><span class="pill p-out">Released</span></div></div>
+      <div class="note" style="margin-top:10px">Staff contact the adopter directly (phone or email) outside the system. Once you've made contact, choose an outcome below.</div>
+      <div style="margin-top:14px">
+        <div style="border:1px solid var(--c200);border-radius:6px;padding:12px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:10px"><input type="radio" name="ns-out" id="ns-rebook" value="rebook" checked><label for="ns-rebook" style="font-weight:600;font-size:13px;cursor:pointer">Rebook Meet &amp; Greet</label></div>
+          <div style="font-size:11px;color:var(--c500);padding-left:24px;margin-top:4px">Adopter responded. Set a new M&amp;G date — slot re-fills on booking confirmed.</div>
+        </div>
+        <div style="border:1px solid var(--c200);border-radius:6px;padding:12px">
+          <div style="display:flex;align-items:center;gap:10px"><input type="radio" name="ns-out" id="ns-unsuccessful" value="unsuccessful"><label for="ns-unsuccessful" style="font-weight:600;font-size:13px;cursor:pointer">Mark Unsuccessful</label></div>
+          <div style="font-size:11px;color:var(--c500);padding-left:24px;margin-top:4px">No response or adopter withdrew. Application closed — adopter cannot reapply for this animal.</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-noshow')">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmNoShow()">Confirm →</button>
+    </div>
+  </div>
+</div>
+
 <!-- Centre switch (admin) -->
 <div class="modal-bg" id="modal-switch">
   <div class="modal">
@@ -985,8 +889,8 @@ var permissions={
 function can(perm){return permissions[role].includes(perm)}
 
 var roleData={
-  staff:{n:'J. Smith',label:'Staff',c:'Auckland City Centre',note:'Frontline operational user. Daily casework: applications, M&G, no-show watch, contracts, payments.'},
-  cm:{n:'K. Tāmaki',label:'Centre Mgr',c:'Auckland City Centre',note:'All Staff actions plus: configure centre booking slots, reassign cases at this centre, confirm DNA flags, manage centre exceptions.'},
+  staff:{n:'J. Smith',label:'Staff',c:'Auckland City Centre',note:'Frontline operational user. Daily casework: applications, In Review, bookings, contracts, payments.'},
+  cm:{n:'K. Tāmaki',label:'Centre Mgr',c:'Auckland City Centre',note:'All Staff actions plus: configure centre booking slots, reassign cases, confirm DNA flags, manage centre exceptions.'},
   admin:{n:'D. Rawiri',label:'Admin',c:'All centres',note:'All Centre Manager actions plus: switch active centre, manage users globally, promote Staff → CM, override Declined-Restricted, edit system settings.'}
 };
 
@@ -1019,7 +923,7 @@ function goScreen(id,navEl){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   var s=document.getElementById('screen-'+id);if(s)s.classList.add('active');
   if(navEl)navEl.classList.add('active');
-  var titles={dashboard:'Dashboard',queue:'Application Queue',review:'In Review',bookings:'Bookings',noshow:'No-Show Watch',animals:'Animals & Slots',dna:'DNA Reviews',centresettings:'Centre Settings',allcentres:'All Centres',system:'System Settings'};
+  var titles={dashboard:'Dashboard',queue:'Application Queue',review:'In Review',bookings:'Bookings',dna:'DNA Reviews',centresettings:'Centre Settings',allcentres:'All Centres',system:'System Settings'};
   document.getElementById('tb-title').textContent=titles[id]||id;
 }
 
@@ -1149,7 +1053,7 @@ function setMGOutcome(val){
   if(val==='same'){btn.innerHTML='Continue to Contract &amp; Pay →';btn.className='btn btn-primary'}
   else if(val==='swap'){btn.innerHTML='Confirm swap &amp; continue →';btn.className='btn btn-primary'}
   else if(val==='multi'){btn.innerHTML='Continue · multi-AID basket →';btn.className='btn btn-primary'}
-  else if(val==='noshow'){btn.innerHTML='Flag No Show · 48hr watch';btn.className='btn btn-danger'}
+  else if(val==='noshow'){btn.innerHTML='Flag No Show → Resolve';btn.className='btn btn-danger'}
   else{btn.innerHTML='Mark withdrawn';btn.className='btn btn-outline'}
 }
 function clearSwapPick(){swapPicked=null;document.getElementById('swap-picked').style.display='none'}
@@ -1173,8 +1077,7 @@ function confirmMGOutcome(){
     showToast('Multi-AID mode. Add additional AIDs via search in basket.');
   }else if(val==='noshow'){
     closeModal('modal-mg');
-    showToast('No Show flagged. 48hr watch started. Open No-Show Watch to log contact.');
-    goScreen('noshow',document.querySelector('[onclick*=noshow]'));
+    openNoShowModal(mgContext.adopter,mgContext.origAnimal,mgContext.origAid);
   }else{
     showToast(mgContext.adopter+' withdrew. Slot released.');closeModal('modal-mg');
   }
@@ -1220,6 +1123,26 @@ function recalcBasket(){
 function triggerContract(){showToast('Triggered: PID retrieved · person record created · contracts &amp; waivers pulled per AID · ePOS held transaction initiated.')}
 function updateAcceptState(){var btn=document.getElementById('pay-btn');btn.disabled=!document.getElementById('chk-contract').checked}
 function confirmPay(){showToast('Payment processed via ePOS · Animals → Adopted · Day 1 email triggered.');closeModal('modal-contract')}
+
+/* ─── No-show resolve (in Bookings) ─── */
+var nsContext={};
+function openNoShowModal(adopter,animal,aid){
+  nsContext={adopter,animal,aid};
+  document.getElementById('ns-name').textContent=adopter;
+  document.getElementById('ns-adopter').textContent=adopter;
+  document.getElementById('ns-animal').textContent=animal+' · '+aid;
+  document.getElementById('ns-rebook').checked=true;
+  openModal('modal-noshow');
+}
+function confirmNoShow(){
+  var val=document.querySelector('input[name="ns-out"]:checked').value;
+  if(val==='rebook'){
+    showToast(nsContext.adopter+' · Rebooked M&G. Slot re-fills on booking confirmed.');
+  }else{
+    showToast(nsContext.adopter+' · Marked Unsuccessful. Slot stays free. Adopter cannot reapply for '+nsContext.animal+'.');
+  }
+  closeModal('modal-noshow');
+}
 
 /* ─── DNA ─── */
 function dnaClear(name){
