@@ -122,6 +122,9 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
 .status-sel.s-dark{background-color:var(--c800);color:var(--c0);border-color:var(--c800)}
 .status-sel.s-mid{background-color:var(--c200);color:var(--c800)}
 .status-sel.s-out{background-color:var(--c100);color:var(--c500);text-decoration:line-through}
+.assign-sel{padding:3px 18px 3px 6px;border:1px solid var(--c300);border-radius:3px;font-size:10px;background:var(--c0);color:var(--c700);cursor:pointer;font-family:inherit;-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3e%3cpath d='M3 5l3 3 3-3' stroke='%23737373' stroke-width='1.4' fill='none' stroke-linecap='round'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right 4px center;background-size:9px;max-width:110px}
+.assign-sel:hover{border-color:var(--c500)}
+.assign-sel:focus{outline:none;border-color:var(--c900);box-shadow:0 0 0 1px var(--c900)}
 .checkbox{display:flex;align-items:flex-start;gap:8px;font-size:12px;cursor:pointer;padding:6px 0;color:var(--c800);line-height:1.5}
 .checkbox input{margin-top:2px}
 
@@ -346,69 +349,135 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
       <div id="screen-applications" class="screen">
         <div class="section-title">Applications · adopter view</div>
         <div class="info">One row per application. <strong>Status dropdown drives the workflow</strong> — change status to update the slot and trigger next actions. No Show is just a status; flip it back to Booked (rebook) or to Unsuccessful as needed. Switch to the <strong>Animals</strong> view to see applications grouped by animal.</div>
+        <div class="warn role-cm role-admin" style="display:none"><strong>Centre Manager view.</strong> You can reassign cases between staff (Assigned column) and bulk reassign filtered cases. Configure booking slots from the Bookings screen. Confirm or override DNA flags from DNA Reviews.</div>
         <div class="panel">
           <div class="panel-h">
             <span class="panel-t">All applications</span><span class="panel-s">9 active</span>
             <select style="margin-left:auto"><option>All tiers</option><option>Simple</option><option>Medium</option><option>Complex</option></select>
             <select><option>All statuses</option><option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option></select>
+            <select class="role-cm role-admin" style="display:none"><option>Assigned to: anyone</option><option>J. Smith</option><option>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option></select>
+            <button class="btn btn-sm btn-outline role-cm role-admin" style="display:none" onclick="bulkReassign()">Bulk reassign…</button>
           </div>
           <div class="tbl-wrap">
             <table>
-              <thead><tr><th>Adopter</th><th>Animal · AID</th><th>Tier</th><th>Status</th><th>Slot</th><th>Action</th></tr></thead>
+              <thead><tr><th>Adopter</th><th>Animal · AID</th><th>Tier</th><th>Status</th><th>Slot</th><th>Assigned</th><th>Action</th></tr></thead>
               <tbody>
                 <tr><td><strong>A. Mitchell</strong><div style="font-size:10px;color:var(--c500)">Applied 2hrs</div></td><td>Kitten litter #4 · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00904</span></td><td><span class="tier-s">Simple</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'A. Mitchell','Kitten litter #4')">
                     <option selected>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-out">on book</span></td><td><button class="btn btn-sm" onclick="openApp('A. Mitchell')">Open</button></td></tr>
+                </td><td><span class="pill p-out">on book</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">J. Smith</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'A. Mitchell')">
+                    <option selected>J. Smith</option><option>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm" onclick="openApp('A. Mitchell')">Open</button></td></tr>
 
                 <tr><td><strong>J. Lee</strong><div style="font-size:10px;color:var(--c500)">Applied 22hrs · email preferred</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'J. Lee','Apollo')">
                     <option>Applied</option><option selected>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-out">on book</span></td><td><button class="btn btn-sm" onclick="openApp('J. Lee')">Open</button></td></tr>
+                </td><td><span class="pill p-out">on book</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">P. Tane</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'J. Lee')">
+                    <option>J. Smith</option><option selected>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm" onclick="openApp('J. Lee')">Open</button></td></tr>
 
                 <tr><td><strong>K. Peters</strong><div style="font-size:10px;color:var(--c500)">Applied 47hrs · phone preferred</div></td><td>Duke · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00688</span></td><td><span class="tier-c">Complex</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'K. Peters','Duke')">
                     <option>Applied</option><option selected>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-out">on book</span></td><td><button class="btn btn-sm" onclick="openApp('K. Peters')">Open</button></td></tr>
+                </td><td><span class="pill p-out">on book</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">J. Smith</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'K. Peters')">
+                    <option selected>J. Smith</option><option>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm" onclick="openApp('K. Peters')">Open</button></td></tr>
 
                 <tr><td><strong>P. Davis</strong><div style="font-size:10px;color:var(--c500)">M&amp;G tomorrow</div></td><td>Biscuit · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'P. Davis','Biscuit')">
                     <option>Applied</option><option>In Review</option><option selected>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-dark">filled ✓</span></td><td><button class="btn btn-sm" onclick="openApp('P. Davis')">Open</button></td></tr>
+                </td><td><span class="pill p-dark">filled ✓</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">P. Tane</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'P. Davis')">
+                    <option>J. Smith</option><option selected>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm" onclick="openApp('P. Davis')">Open</button></td></tr>
 
                 <tr><td><strong>S. Williams</strong><div style="font-size:10px;color:var(--c500)">Today 10:30</div></td><td>Biscuit · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00847</span></td><td><span class="tier-m">Medium</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'S. Williams','Biscuit')">
                     <option>Applied</option><option>In Review</option><option>Booked</option><option selected>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-dark">filled ✓</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">M&amp;G</button></td></tr>
+                </td><td><span class="pill p-dark">filled ✓</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">J. Smith</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'S. Williams')">
+                    <option selected>J. Smith</option><option>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm btn-primary" onclick="openMGAction('S. Williams','Biscuit','AID-00847')">M&amp;G</button></td></tr>
 
                 <tr><td><strong>L. Park</strong><div style="font-size:10px;color:var(--c500)">Today 3:30</div></td><td>Luna · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00821</span></td><td><span class="tier-m">Medium</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'L. Park','Luna')">
                     <option>Applied</option><option>In Review</option><option>Booked</option><option selected>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-dark">filled ✓</span></td><td><button class="btn btn-sm btn-primary" onclick="openMGAction('L. Park','Luna','AID-00821')">M&amp;G</button></td></tr>
+                </td><td><span class="pill p-dark">filled ✓</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">P. Tane</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'L. Park')">
+                    <option>J. Smith</option><option selected>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm btn-primary" onclick="openMGAction('L. Park','Luna','AID-00821')">M&amp;G</button></td></tr>
 
                 <tr style="background:var(--c50)"><td><strong>L. Marsh</strong><div style="font-size:10px;color:var(--c500)">Missed M&amp;G — staff to follow up</div></td><td>Apollo · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00712</span></td><td><span class="tier-c">Complex</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'L. Marsh','Apollo')">
                     <option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option selected>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-out">released</span></td><td><button class="btn btn-sm" onclick="openApp('L. Marsh')">Open</button></td></tr>
+                </td><td><span class="pill p-out">released</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">J. Smith</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'L. Marsh')">
+                    <option selected>J. Smith</option><option>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm" onclick="openApp('L. Marsh')">Open</button></td></tr>
 
                 <tr><td><strong>M. Patel</strong><div style="font-size:10px;color:var(--c500)">M&amp;G done · contract pending</div></td><td>Kitten litter #4 · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00904</span></td><td><span class="tier-s">Simple</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'M. Patel','Kitten litter #4')">
                     <option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option selected>Adopted</option>
                   </select>
-                </td><td><span class="pill p-out">released</span></td><td><button class="btn btn-sm btn-primary" onclick="openContract('M. Patel','Kitten litter #4','AID-00904')">Contract</button></td></tr>
+                </td><td><span class="pill p-out">released</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">J. Smith</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'M. Patel')">
+                    <option selected>J. Smith</option><option>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm btn-primary" onclick="openContract('M. Patel','Kitten litter #4','AID-00904')">Contract</button></td></tr>
 
                 <tr><td><strong>D. Reed</strong><div style="font-size:10px;color:var(--c500)">Generic profile · no auto-email</div></td><td>Kitten litter #3 · <span style="font-family:monospace;font-size:10px;color:var(--c500)">AID-00903</span></td><td><span class="tier-s">Simple</span></td><td>
                   <select class="status-sel" onchange="changeStatus(this,'D. Reed','Kitten litter #3')">
                     <option>Applied</option><option>In Review</option><option>Booked</option><option>M&amp;G Today</option><option selected>No Show</option><option>Withdrawn</option><option>Unsuccessful</option><option>Adopted</option>
                   </select>
-                </td><td><span class="pill p-out">released</span></td><td><button class="btn btn-sm" onclick="openApp('D. Reed')">Open</button></td></tr>
+                </td><td><span class="pill p-out">released</span></td>
+                <td>
+                  <span class="role-staff-only" style="font-size:11px;color:var(--c700)">P. Tane</span>
+                  <select class="assign-sel role-cm role-admin" style="display:none" onchange="reassign(this,'D. Reed')">
+                    <option>J. Smith</option><option selected>P. Tane</option><option>K. Tāmaki</option><option>Unassigned</option>
+                  </select>
+                </td>
+                <td><button class="btn btn-sm" onclick="openApp('D. Reed')">Open</button></td></tr>
               </tbody>
             </table>
           </div>
@@ -424,6 +493,7 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
             <span class="panel-t">Animals at this centre</span><span class="panel-s">7 listed</span>
             <select style="margin-left:auto"><option>All tiers</option><option>Simple</option><option>Medium</option><option>Complex</option></select>
             <button class="btn btn-sm btn-outline" onclick="openSBSearch()">+ Search any animal</button>
+            <button class="btn btn-sm btn-outline role-cm role-admin" style="display:none" onclick="slotException()">⚙ Slot exception…</button>
           </div>
           <div class="tbl-wrap">
             <table>
@@ -496,7 +566,12 @@ select{padding:5px 8px;border:1px solid var(--c300);border-radius:4px;font-size:
         <div class="section-title">Bookings · Meet &amp; Greet</div>
         <div class="info">Portal is the source of truth · Outlook view-only. Slot released on cancel / no-show / withdrawn / unsuccessful. Status changes happen on the Applications row.</div>
         <div class="panel">
-          <div class="panel-h"><span class="panel-t">Today · Tue 22 Apr</span><button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openSBSearch()">+ Walk-in M&amp;G</button></div>
+          <div class="panel-h">
+            <span class="panel-t">Today · Tue 22 Apr</span>
+            <button class="btn btn-sm btn-primary" style="margin-left:auto" onclick="openSBSearch()">+ Walk-in M&amp;G</button>
+            <button class="btn btn-sm btn-outline role-cm role-admin" style="display:none" onclick="goScreen('centresettings',document.querySelector('[onclick*=centresettings]'))">⚙ Configure slots</button>
+            <button class="btn btn-sm btn-outline role-cm role-admin" style="display:none" onclick="blockOutTime()">+ Block-out time</button>
+          </div>
           <div class="tbl-wrap">
             <table>
               <thead><tr><th>Time</th><th>Adopter</th><th>Animal</th><th>Status</th><th>Action</th></tr></thead>
@@ -1092,11 +1167,18 @@ function applyRole(){
   document.getElementById('sb-role').textContent=r.label;
   document.getElementById('sb-centre').textContent=r.c;
   document.getElementById('tb-centre-pill').textContent=r.c;
-  // show/hide nav by role
-  document.querySelectorAll('.role-cm').forEach(el=>el.style.display=(role==='cm'||role==='admin')?'':'none');
-  document.querySelectorAll('.role-admin').forEach(el=>el.style.display=role==='admin'?'':'none');
-  // Staff sees "DNA Hold" row; CM/Admin sees "DNA flag · Review" row
-  document.querySelectorAll('.role-staff-only').forEach(el=>el.style.display=role==='staff'?'':'none');
+  // Show/hide by role. An element with BOTH role-cm and role-admin classes
+  // means "CM or higher" — visible to CM and Admin. We must compute visibility
+  // per element from the union of its role classes, not run two passes that
+  // overwrite each other.
+  var ALL = document.querySelectorAll('.role-cm, .role-admin, .role-staff-only');
+  ALL.forEach(function(el){
+    var allowed = false;
+    if(el.classList.contains('role-staff-only') && role==='staff') allowed = true;
+    if(el.classList.contains('role-cm') && (role==='cm' || role==='admin')) allowed = true;
+    if(el.classList.contains('role-admin') && role==='admin') allowed = true;
+    el.style.display = allowed ? '' : 'none';
+  });
 }
 function doLogout(){document.getElementById('main-app').style.display='none';document.getElementById('login-screen').style.display='flex'}
 
@@ -1346,6 +1428,24 @@ function updateAcceptState(){
   btn.disabled=!(checked && sig.length>=2);
 }
 function confirmPay(){showToast('Payment processed via ePOS · Animals → Adopted · Day 1 email triggered.');closeModal('modal-contract')}
+
+/* ─── Case reassignment (CM / Admin) ─── */
+function reassign(sel, adopter){
+  if(!can('reassign')){showToast('Reassignment is restricted to Centre Manager and Admin.');return}
+  showToast(adopter+' reassigned to '+sel.value+'.');
+}
+function bulkReassign(){
+  if(!can('reassign')){showToast('Reassignment is restricted to Centre Manager and Admin.');return}
+  showToast('Bulk reassign — select multiple applications then choose a target staff member.');
+}
+function blockOutTime(){
+  if(!can('centre_settings')){showToast('Centre booking configuration is restricted to Centre Manager and Admin.');return}
+  showToast('Block-out time — set centre-wide unavailable periods (lunch breaks, training days, public holidays).');
+}
+function slotException(){
+  if(!can('centre_settings')){showToast('Slot exceptions are restricted to Centre Manager and Admin.');return}
+  showToast('Slot exception — override the default 3-slot cap for a specific animal (e.g. high-demand kitten litters or long-stay cases).');
+}
 
 /* ─── Inline status change (Applications screen) ─── */
 function changeStatus(sel, adopter, animal){
